@@ -1,0 +1,17 @@
+---
+- name: setup manjaro on RPI4
+  hosts: localhost
+  become: yes
+
+  tasks:
+    - name: full system upgrade
+      pacman:
+        update_cache: yes
+        upgrade: yes
+    - name: packages
+      pacman:
+        name:
+          - vim
+          - git
+          - i3-wm
+        state: present
