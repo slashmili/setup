@@ -15,3 +15,17 @@
           - git
           - i3-wm
         state: present
+
+    - name: Test for entry mouse poll
+      command: 'grep "usbhid.mousepoll=0" /boot/cmdline.txt'
+      register: test_grep_mousepoll
+      ignore_errors: yes
+
+    - name: cmdline mouse poll
+      lineinfile:
+        path: /boot/cmdline.txt
+        backrefs: True
+        state: present
+        regexp: '(.*)$'
+        line: '\1 usbhid.mousepoll=0'
+      when: test_grep_mousepoll.stdout == ""
