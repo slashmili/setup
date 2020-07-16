@@ -1,0 +1,111 @@
+---
+- name: setup dev manjaro on VirtualBox
+  hosts: localhost
+  become: yes
+
+  tasks:
+    - name: full system upgrade
+      pacman:
+        update_cache: yes
+        upgrade: yes
+
+    - name: packages
+      pacman:
+        name:
+          - neovim
+          - git
+          - docker-compose
+          - base-devel
+          - ripgrep
+          - tmux
+          - docker
+          - openssh
+          - fish
+          - unzip
+        state: present
+
+    - name: clone dotfiles
+      become_user: milad
+      git:
+        repo: https://github.com/slashmili/dotfiles.git
+        dest: ~/.dotfiles
+
+    - name: clone minpac
+      become_user: milad
+      git:
+        repo: https://github.com/k-takata/minpac.git
+        dest: ~/.dotfiles/.vim/pack/minpac/opt/minpac
+
+    - name: clone asdf
+      become_user: milad
+      git:
+        repo: https://github.com/asdf-vm/asdf.git
+        dest: ~/.asdf
+        version: v0.7.8
+
+    - name: asdf config for fish
+      become_user: milad
+      copy:
+        dest: ~/.config/fish/conf.d/asdf.fish
+        content: |
+          source ~/.asdf/asdf.fish
+          set -gx PATH ~/.asdf/bin/ $PATH
+          source ~/.asdf/completions/asdf.fish
+
+    - name: enable erlang pluging for asdf
+      command: ~/.asdf/bin/asdf plugin-add erlang https://github.com/asdf-vm/asdf-erlang.git
+      ignore_errors: yes
+      become_user: milad
+
+    - name: enable elixir pluging for asdf
+      command: ~/.asdf/bin/asdf plugin-add elixir https://github.com/asdf-vm/asdf-elixir.git
+      ignore_errors: yes
+      become_user: milad
+
+    - name: install erlang using asdf
+      command: asdf install erlang 23.0 && asdf global erlang 23.0
+      become_user: milad
+
+    - name: install elixir using asdf
+      command: asdf install elixir 1.10.4-otp-23 && asdf global elixir 1.10.4-otp-23
+      become_user: milad
+
+    - name: enable node pluging for asdf
+      command: ~/.asdf/bin/asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+      ignore_errors: yes
+      become_user: milad
+
+    - name: install node using asdf
+      command: asdf install nodejs 12.18.0 && asdf global nodejs 12.18.0
+      become_user: milad
+
+    - name: mkdir config dirs
+      command: mkdir -p ~/.config/fish/conf.d ~/.config/fish/functions ~/.config/nvim ~/.config/fish/completions
+      become_user: milad
+
+    - name: link fish prompt
+      become_user: milad
+      file:
+        src: ~/.dotfiles/.config/fish/functions/fish_prompt.fish
+        dest: ~/.config/fish/functions/fish_prompt.fish
+        state: link
+
+    - name: link nvim config
+      become_user: milad
+      file:
+        src: ~/.dotfiles/.vimrc
+        dest: ~/.config/nvim/init.vim
+        state: link
+
+    - name: link nvim minipac
+      become_user: milad
+      file:
+        src: ~/.dotfiles/.vim/pack
+        dest: ~/.config/nvim/pack
+        state: link
+
+    - name: enable dhcpd and start it
+      systemd:
+        name: dhcpcd.service
+        enabled: yes
+        state: started
