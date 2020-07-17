@@ -4,6 +4,18 @@
   become: yes
 
   tasks:
+    - name: enable dhcpd and start it
+      systemd:
+        name: dhcpcd.service
+        enabled: yes
+        state: started
+
+    - name: enable timesyncd
+      systemd:
+        name: systemd-timesyncd.service
+        enabled: yes
+        state: started
+
     - name: full system upgrade
       pacman:
         update_cache: yes
@@ -103,9 +115,3 @@
         src: ~/.dotfiles/.vim/pack
         dest: ~/.config/nvim/pack
         state: link
-
-    - name: enable dhcpd and start it
-      systemd:
-        name: dhcpcd.service
-        enabled: yes
-        state: started
