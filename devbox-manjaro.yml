@@ -26,6 +26,7 @@
         name:
           - neovim
           - git
+          - git-crypt
           - docker-compose
           - base-devel
           - ripgrep
