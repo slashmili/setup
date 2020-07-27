@@ -49,6 +49,12 @@
         repo: https://github.com/k-takata/minpac.git
         dest: ~/.dotfiles/.vim/pack/minpac/opt/minpac
 
+    - name: clone dracula vim theme
+      become_user: milad
+      git:
+        repo: https://github.com/dracula/vim.git
+        dest: ~/.vim/pack/themes/start/dracula/
+
     - name: clone asdf
       become_user: milad
       git:
