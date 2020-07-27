@@ -94,6 +94,11 @@
       ignore_errors: yes
       become_user: milad
 
+    - name: import asdf nodejs keyring
+      command: ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
+      ignore_errors: yes
+      become_user: milad
+
     - name: install node using asdf
       command: asdf install nodejs 12.18.0 && asdf global nodejs 12.18.0
       become_user: milad
