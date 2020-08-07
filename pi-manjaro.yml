@@ -36,3 +36,32 @@
         name: pcscd.service
         enabled: yes
         state: started
+
+    - name: create fish conf.d
+      become_user: milad
+      file:
+        path: ~/.config/fish/conf.d/
+        state: directory
+        recurse: yes
+
+    - name: configure gpg env for fish
+      become_user: milad
+      copy:
+        dest: ~/.config/fish/conf.d/gpg-env.fish
+        content: |
+          set -x GPG_TTY (tty)
+          set -x SSH_AUTH_SOCK (gpgconf --list-dirs agent-ssh-socket)
+
+    - name: create ~/.gnupg dir
+      become_user: milad
+      file:
+        path: ~/.gnupg
+        state: directory
+
+    - name: configure gpg
+      become_user: milad
+      copy:
+        dest: ~/.gnupg/gpg-agent.conf
+        content: |
+          enable-ssh-support
+          pinentry-program /usr/bin/pinentry-qt
