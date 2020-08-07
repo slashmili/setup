@@ -41,6 +41,10 @@
       command: usermod -aG docker milad
       ignore_errors: yes
 
+    - name: set default user shell to fish
+      command: usermod --shell /bin/fish milad
+      ignore_errors: yes
+
     - name: create fish conf.d dir
       become_user: milad
       file:
