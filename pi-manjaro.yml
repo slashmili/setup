@@ -14,6 +14,7 @@
           - vim
           - git
           - i3-wm
+          - yubikey-manager
         state: present
 
     - name: Test for entry mouse poll
@@ -29,3 +30,9 @@
         regexp: '(.*)$'
         line: '\1 usbhid.mousepoll=0'
       when: test_grep_mousepoll.stdout == ""
+
+    - name: enable pcscd
+      systemd:
+        name: pcscd.service
+        enabled: yes
+        state: started
