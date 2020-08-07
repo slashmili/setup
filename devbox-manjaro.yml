@@ -37,6 +37,35 @@
           - unzip
         state: present
 
+    - name: create fish conf.d dir
+      become_user: milad
+      file:
+        path: ~/.config/fish/conf.d/
+        state: directory
+        recurse: yes
+
+    - name: create fish functions dir
+      become_user: milad
+      file:
+        path: ~/.config/fish/functions
+        state: directory
+        recurse: yes
+
+    - name: create fish completions dir
+      become_user: milad
+      file:
+        path: ~/.config/fish/completions
+        state: directory
+        recurse: yes
+
+
+    - name: create nvim dir
+      become_user: milad
+      file:
+        path: ~/.config/nvim
+        state: directory
+        recurse: yes
+
     - name: clone dotfiles
       become_user: milad
       git:
@@ -101,10 +130,6 @@
 
     - name: install node using asdf
       command: asdf install nodejs 12.18.0 && asdf global nodejs 12.18.0
-      become_user: milad
-
-    - name: mkdir config dirs
-      command: mkdir -p ~/.config/fish/conf.d ~/.config/fish/functions ~/.config/nvim ~/.config/fish/completions
       become_user: milad
 
     - name: link fish prompt
