@@ -37,6 +37,10 @@
           - unzip
         state: present
 
+    - name: add user to docker group
+      command: usermod -aG docker milad
+      ignore_errors: yes
+
     - name: create fish conf.d dir
       become_user: milad
       file:
